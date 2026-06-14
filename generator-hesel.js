@@ -78,8 +78,38 @@ function closeGeneratorModal() {
     }
 }
 
+// ========================================
+// 🔒 KRYPTOGRAFICKY BEZPEČNÉ NÁHODNÉ ČÍSLO
+// ========================================
+
+/**
+ * Vrátí bezpečné náhodné celé číslo od 0 do max-1.
+ * Používá Web Crypto API (window.crypto) místo Math.random().
+ * Math.random() je pseudonáhodný a NENÍ vhodný pro generování hesel!
+ */
+function secureRandom(max) {
+    const array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    // Modulo bias je zanedbatelné pro délky znakových sad <65536
+    return array[0] % max;
+}
+
+/**
+ * Fisher-Yates shuffle s kryptograficky bezpečným RNG.
+ * sort(() => 0.5 - Math.random()) je statisticky zkosený — NEPOUŽÍVAT pro hesla!
+ */
+function secureShuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = secureRandom(i + 1);
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 /**
  * Hlavní logika pro vygenerování ultra-silného hesla
+ * ✅ Opraveno: Math.random() → window.crypto.getRandomValues()
+ * ✅ Opraveno: sort(Math.random) → Fisher-Yates bezpečný shuffle
  */
 function generateNewPassword() {
     const length = parseInt(document.getElementById('pwdLength').value);
@@ -103,36 +133,24 @@ function generateNewPassword() {
     const symbols = '!@#$%^&*()_+~|}{[]:;?><,./-=';
 
     let chars = '';
-    let password = '';
+    let passwordChars = [];
     
-    // Zajištění, že heslo bude obsahovat alespoň jeden znak od každého vybraného typu
-    if (hasUpper) {
-        chars += upper;
-        password += upper[Math.floor(Math.random() * upper.length)];
-    }
-    if (hasLower) {
-        chars += lower;
-        password += lower[Math.floor(Math.random() * lower.length)];
-    }
-    if (hasNumbers) {
-        chars += numbers;
-        password += numbers[Math.floor(Math.random() * numbers.length)];
-    }
-    if (hasSymbols) {
-        chars += symbols;
-        password += symbols[Math.floor(Math.random() * symbols.length)];
+    // Zajištění alespoň jednoho znaku od každého vybraného typu
+    if (hasUpper)   { chars += upper;   passwordChars.push(upper[secureRandom(upper.length)]); }
+    if (hasLower)   { chars += lower;   passwordChars.push(lower[secureRandom(lower.length)]); }
+    if (hasNumbers) { chars += numbers; passwordChars.push(numbers[secureRandom(numbers.length)]); }
+    if (hasSymbols) { chars += symbols; passwordChars.push(symbols[secureRandom(symbols.length)]); }
+
+    // Doplnění na požadovanou délku pomocí bezpečného RNG
+    while (passwordChars.length < length) {
+        passwordChars.push(chars[secureRandom(chars.length)]);
     }
 
-    // Doplnění hesla na požadovanou délku
-    while (password.length < length) {
-        password += chars[Math.floor(Math.random() * chars.length)];
-    }
-
-    // Zamíchání hesla (aby garantované znaky nebyly vždy na začátku)
-    password = password.split('').sort(() => 0.5 - Math.random()).join('');
+    // ✅ Bezpečný Fisher-Yates shuffle (ne zkosený sort!)
+    secureShuffleArray(passwordChars);
 
     // Zobrazení na displeji
-    document.getElementById('generatedPasswordDisplay').innerText = password;
+    document.getElementById('generatedPasswordDisplay').innerText = passwordChars.join('');
 }
 
 /**
