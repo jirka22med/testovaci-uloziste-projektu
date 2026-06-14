@@ -81,15 +81,13 @@ if ('serviceWorker' in navigator) {
         
         <!-- Dropdown menu -->
         <div id="exportDropdown" class="export-dropdown hidden">
-            <button onclick="exportToTxt()" title="Export jako čitelný TXT soubor">
-                📄 TXT
-            </button>
-            <button onclick="exportToCsv()" title="Export pro Excel (CSV)">
+            <button onclick="exportToTxt()">📄 Export do TXT (Bezpečný Base64)</button>
+            <!-- <button onclick="exportToCsv()" title="Export pro Excel (CSV)">
                 📊 CSV
             </button>
             <button onclick="exportToJson()" title="Export jako JSON (pro programátory)">
                 📦 JSON
-            </button>
+            </button> -->
         </div>
     </div>
     
