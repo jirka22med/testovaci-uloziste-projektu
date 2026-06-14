@@ -268,6 +268,30 @@ async function getPasswordsWithCache(forceRefresh = false) {
     }
 }
 
+
+/**
+ * 📋 NOVÉ: Zkopírování hesla do schránky
+ */
+async function copyPassword(idx) {
+    try {
+        const list = await getPasswordsWithCache();
+        
+        if (list && list[idx]) {
+            const pwd = list[idx].password;
+            
+            // Zápis do schránky systému
+            await navigator.clipboard.writeText(pwd);
+            
+            // Oznámení pro uživatele
+            showFleetNotification('📋 Heslo zkopírováno do schránky!');
+        }
+    } catch (error) {
+        console.error("Chyba při kopírování:", error);
+        showFleetNotification('❌ Chyba při kopírování hesla. Zkontrolujte oprávnění prohlížeče.', true);
+    }
+}
+
+
 /**
  * Uložení hesel a invalidace cache
  */
@@ -958,7 +982,7 @@ async function savePassword() {
 /**
  * Načtení hesel - OPTIMALIZOVÁNO s DocumentFragment
  */
-async function loadPasswords() {
+/* async function loadPasswords() {
     clearTable();
     
     if (!masterKeyStore.exists()) {
@@ -1022,6 +1046,81 @@ async function loadPasswords() {
         showFleetNotification('❌ Chyba při načítání hesel z cloudu.', true);
     }
 }
+*/
+
+/**
+ * Načtení hesel - OPTIMALIZOVÁNO s DocumentFragment a přidáno KOPÍROVÁNÍ
+ */
+async function loadPasswords() {
+    clearTable();
+    
+    if (!masterKeyStore.exists()) {
+        console.warn('Master heslo není nastaveno. Nelze načíst hesla.');
+        return;
+    }
+
+    try {
+        const list = await getPasswordsWithCache();
+        
+        const tbody = document.querySelector('#passwordTable tbody');
+        const emptyState = document.getElementById('emptyState');
+        const table = document.getElementById('passwordTable');
+        
+        if (!tbody || !emptyState || !table) {
+            console.error('Table elements not found');
+            return;
+        }
+        
+        if (list.length === 0) {
+            table.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+        } else {
+            table.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            // ⚡ OPTIMALIZACE: Použití DocumentFragment pro jeden reflow
+            const fragment = document.createDocumentFragment();
+            
+            list.forEach((e, i) => {
+                const row = document.createElement('tr');
+                
+                // Escapování HTML pro bezpečnost
+                const escapedService = String(e.service).replace(/[&<>"']/g, (char) => {
+                    const entities = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+                    return entities[char];
+                });
+                const escapedUsername = String(e.username).replace(/[&<>"']/g, (char) => {
+                    const entities = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+                    return entities[char];
+                });
+                const escapedPassword = String(e.password).replace(/[&<>"']/g, (char) => {
+                    const entities = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+                    return entities[char];
+                });
+                
+                // ⚡ NOVÉ: Tlačítko kopírovat přidáno do akčního sloupce
+                row.innerHTML = `
+                    <td>${escapedService}</td>
+                    <td>${escapedUsername}</td>
+                    <td>${escapedPassword}</td>
+                    <td style="display: flex; gap: 8px; align-items: center;">
+                        <button class="copy-btn" onclick="copyPassword(${i})" title="Zkopírovat heslo do schránky">📋 Kopírovat</button>
+                        <button class="delete-btn" onclick="deletePassword(${i})" title="Smazat toto heslo">🗑️ Smazat</button>
+                    </td>
+                `;
+                
+                fragment.appendChild(row);
+            });
+            
+            tbody.appendChild(fragment); // ✅ Jeden reflow místo stovek!
+        }
+    } catch (error) {
+        console.error("Chyba při načítání hesel:", error);
+        showFleetNotification('❌ Chyba při načítání hesel z cloudu.', true);
+    }
+}
+
+
 
 /**
  * ✅ FIX #1: Smazání hesla - AKTUALIZOVÁNO s auto-sync
