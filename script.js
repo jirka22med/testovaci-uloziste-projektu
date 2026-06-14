@@ -1134,9 +1134,11 @@ async function exportToTxt() {
 
 // ============================================
 
-/**
- * ✅ NOVÉ: Export do CSV (Excel kompatibilní)
- */
+/*
+
+/
+  ✅ NOVÉ: Export do CSV (Excel kompatibilní)
+  
 async function exportToCsv() {
     if (!masterKeyStore.exists()) {
         showFleetNotification('❌ Nejsi přihlášen – masterKey chybí!', true);
@@ -1210,7 +1212,7 @@ async function exportToCsv() {
 
 /**
  * ✅ NOVÉ: Export do JSON (pro programátory)
- */
+  
 async function exportToJson() {
     if (!masterKeyStore.exists()) {
         showFleetNotification('❌ Nejsi přihlášen – masterKey chybí!', true);
@@ -1269,7 +1271,7 @@ async function exportToJson() {
         showFleetNotification('❌ Chyba při JSON exportu.', true);
     }
 }
-
+ */
 /**
  * ✅ NOVÉ: Zobrazení/skrytí dropdown menu
  */
