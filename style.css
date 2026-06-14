@@ -1756,4 +1756,33 @@ Stačí zkopírovat CSS proměnné pattern, který už máš:
         font-size: 0.8em;
     }
 }
- 
+
+
+/* ========================================== */
+/* 📋 TLAČÍTKO KOPÍROVAT V TABULCE */
+/* ========================================== */
+
+.copy-btn {
+    background: var(--gradient-info);
+    padding: 8px 16px;
+    font-size: var(--font-small);
+    color: white;
+    border: none;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.copy-btn:hover {
+    box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+}
+
+/* Úprava pro mobily - zarovnání s delete tlačítkem */
+@media (max-width: 479px) {
+    .copy-btn {
+        padding: 6px 12px;
+        font-size: 0.75em;
+    }
+}
