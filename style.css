@@ -402,6 +402,17 @@ button:active {
     box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
 }
 
+/* 📋 KOPÍROVAT HESLO - tlačítko v tabulce hesel */
+.copy-btn {
+    background: var(--gradient-primary);
+    padding: 8px 16px;
+    font-size: var(--font-small);
+}
+
+.copy-btn:hover {
+    box-shadow: 0 8px 25px rgba(0, 102, 204, 0.4);
+}
+
 .forgot { 
     background: none; 
     border: none; 
@@ -1754,35 +1765,5 @@ Stačí zkopírovat CSS proměnné pattern, který už máš:
     .export-dropdown button {
         padding: 8px 12px;
         font-size: 0.8em;
-    }
-}
-
-
-/* ========================================== */
-/* 📋 TLAČÍTKO KOPÍROVAT V TABULCE */
-/* ========================================== */
-
-.copy-btn {
-    background: var(--gradient-info);
-    padding: 8px 16px;
-    font-size: var(--font-small);
-    color: white;
-    border: none;
-    border-radius: var(--radius-small);
-    cursor: pointer;
-    transition: var(--transition-fast);
-    position: relative;
-    overflow: hidden;
-}
-
-.copy-btn:hover {
-    box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
-}
-
-/* Úprava pro mobily - zarovnání s delete tlačítkem */
-@media (max-width: 479px) {
-    .copy-btn {
-        padding: 6px 12px;
-        font-size: 0.75em;
     }
 }
