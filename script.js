@@ -1036,6 +1036,7 @@ async function loadPasswords() {
                     <td>${escapedUsername}</td>
                     <td>${escapedPassword}</td>
                     <td style="display: flex; gap: 8px; align-items: center;">
+                        <button class="edit-btn" onclick="openEditModal(${i})" title="Editovat heslo">✏️ Editovat</button>
                         <button class="copy-btn" onclick="copyPassword(${i})" title="Zkopírovat heslo do schránky">📋 Kopírovat</button>
                         <button class="delete-btn" onclick="deletePassword(${i})" title="Smazat toto heslo">🗑️ Smazat</button>
                     </td>
